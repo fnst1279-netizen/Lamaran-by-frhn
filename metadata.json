@@ -1,0 +1,6 @@
+{
+  "name": "LAMARAN By FRHN",
+  "description": "Asisten AI untuk membuat surat lamaran kerja profesional standar Indonesia dengan format Yth. dan fitur ekspor ke PDF.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
