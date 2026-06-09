@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { jsPDF } from "jspdf";
 // @ts-ignore
-import devAvatar from "./assets/images/dev_avatar_1781029747280.png";
+import devAvatar from "./assets/images/dev_avatar.jpg";
 
 // Default letter preset interface
 interface LetterPreset {
@@ -115,7 +115,7 @@ export default function App() {
   };
 
   // State definitions for letter input fields
-  const [senderName, setSenderName] = useState("Farhan Abdillah");
+  const [senderName, setSenderName] = useState("Muhammad Farhan Nasution");
   const [senderBirthDetails, setSenderBirthDetails] = useState("Jakarta, 12 April 2001");
   const [senderEducation, setSenderEducation] = useState("S1 Sistem Informasi, Universitas Gunadarma");
   const [senderEmail, setSenderEmail] = useState("farhan.abdillah@email.com");
@@ -153,7 +153,7 @@ Sehubungan dengan adanya informasi lowongan pekerjaan yang saya dapatkan dari Lo
 
 Berikut adalah biodata singkat mengenai diri saya:
 
-Nama : Farhan Abdillah
+Nama : Muhammad Farhan Nasution
 Tempat, Tanggal Lahir : Jakarta, 12 April 2001
 Pendidikan Terakhir : S1 Sistem Informasi, Universitas Gunadarma
 Email : farhan.abdillah@email.com
@@ -177,7 +177,7 @@ Hormat saya,
 
 [Tanda Tangan]
 
-Farhan Abdillah`;
+Muhammad Farhan Nasution`;
 
   const [generatedLetter, setGeneratedLetter] = useState(initialLetter);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -991,7 +991,7 @@ Farhan Abdillah`;
               <div className="w-24 h-24 rounded-full p-1 bg-white shadow-md">
                 <img 
                   src={devAvatar} 
-                  alt="Farhan" 
+                  alt="Muhammad Farhan Nasution" 
                   className="w-full h-full rounded-full object-cover"
                   referrerPolicy="no-referrer"
                   id="developer-avatar-img"
@@ -1001,7 +1001,7 @@ Farhan Abdillah`;
             </div>
 
             {/* Bio Info */}
-            <h3 className="font-bold text-lg text-slate-900 leading-tight">Farhan Abdillah</h3>
+            <h3 className="font-bold text-lg text-slate-900 leading-tight">Muhammad Farhan Nasution</h3>
             <p className="text-xs font-semibold text-indigo-600 mt-1 uppercase tracking-wider">Lead Fullstack Developer</p>
 
             {/* Divider */}
