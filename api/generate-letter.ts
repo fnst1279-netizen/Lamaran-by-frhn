@@ -3,15 +3,25 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Initialize Gemini client on the server side
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-  httpOptions: {
-    headers: {
-      'User-Agent': 'aistudio-build',
+// Initialize Gemini client on the server side lazily
+let aiClient: GoogleGenAI | null = null;
+function getAIClient(): GoogleGenAI {
+  if (!aiClient) {
+    const key = process.env.GEMINI_API_KEY;
+    if (!key) {
+      throw new Error("GEMINI_API_KEY is not defined. Please add GEMINI_API_KEY to your Vercel Environment Variables.");
     }
+    aiClient = new GoogleGenAI({
+      apiKey: key,
+      httpOptions: {
+        headers: {
+          'User-Agent': 'aistudio-build',
+        }
+      }
+    });
   }
-});
+  return aiClient;
+}
 
 export default async function handler(req: any, res: any) {
   // Only allow POST requests
@@ -103,44 +113,50 @@ Tolong buat surat lamaran kerja Indonesia yang resmi dan optimal berdasarkan dat
     let lastError: any = null;
     let modelUsed = "";
 
-    for (const modelName of candidateModels) {
-      let delay = 500;
-      const maxRetries = 2; // For each model, attempt up to 2 times
-      
-      for (let attempt = 1; attempt <= maxRetries; attempt++) {
-        try {
-          console.log(`[Vercel API] Menghubungi AI Model \${modelName} (Percobaan \${attempt}/\${maxRetries})...`);
-          const response = await ai.models.generateContent({
-            model: modelName,
-            contents: prompt,
-            config: {
-              systemInstruction,
-              temperature: 0.65,
-            },
-          });
+    try {
+      const ai = getAIClient();
+      for (const modelName of candidateModels) {
+        let delay = 500;
+        const maxRetries = 2; // For each model, attempt up to 2 times
+        
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+          try {
+            console.log(`[Vercel API] Menghubungi AI Model \${modelName} (Percobaan \${attempt}/\${maxRetries})...`);
+            const response = await ai.models.generateContent({
+              model: modelName,
+              contents: prompt,
+              config: {
+                systemInstruction,
+                temperature: 0.65,
+              },
+            });
 
-          if (response && response.text) {
-            letterText = response.text;
-            modelUsed = modelName;
-            break;
-          }
-        } catch (err: any) {
-          lastError = err;
-          console.log(`[Vercel API] Model \${modelName} sedang sibuk (Percobaan \${attempt}/\${maxRetries})`);
-          
-          const isTemporary = err.status === 429 || err.status === 503 || err.message?.includes("503") || err.message?.includes("UNAVAILABLE") || err.status === 408;
-          if (isTemporary && attempt < maxRetries) {
-            await new Promise((resolve) => setTimeout(resolve, delay));
-            delay *= 1.5; // Exponential backoff scaling
-          } else {
-            break; // Proceed to next candidate model
+            if (response && response.text) {
+              letterText = response.text;
+              modelUsed = modelName;
+              break;
+            }
+          } catch (err: any) {
+            lastError = err;
+            console.log(`[Vercel API] Model \${modelName} sedang sibuk (Percobaan \${attempt}/\${maxRetries})`);
+            
+            const isTemporary = err.status === 429 || err.status === 503 || err.message?.includes("503") || err.message?.includes("UNAVAILABLE") || err.status === 408;
+            if (isTemporary && attempt < maxRetries) {
+              await new Promise((resolve) => setTimeout(resolve, delay));
+              delay *= 1.5; // Exponential backoff scaling
+            } else {
+              break; // Proceed to next candidate model
+            }
           }
         }
+        
+        if (letterText) {
+          break; // Successfully got response, stop trying other models
+        }
       }
-      
-      if (letterText) {
-        break; // Successfully got response, stop trying other models
-      }
+    } catch (apiError: any) {
+      console.warn("[Vercel API] AI initialization or API client error (graceful fallback in effect):", apiError.message || apiError);
+      lastError = apiError;
     }
 
     if (!letterText) {
