@@ -75,30 +75,30 @@ Pastikan struktur layout mengikuti standar surat bisnis Indonesia yang formal:
 9. Paragraf penutup yang menyampaikan harapan dipanggil wawancara, komitmen, ucapan terima kasih yang tulus.
 10. Salam penutup "Hormat saya," diletakkan di bagian kanan bawah surat, diberikan jarak/spasi kosong yang cukup untuk tanda tangan fisik pemohon, baru di bawahnya ditulis nama lengkap Anda dengan jelas.
 
-Harap sesuaikan gaya bahasa dangan nada: \${tone} (bisa Formal, Profesional, Kreatif, Percaya Diri, atau Ramah).
+Harap sesuaikan gaya bahasa dangan nada: ${tone} (bisa Formal, Profesional, Kreatif, Percaya Diri, atau Ramah).
 Kirimkan langsung teks utuh surat lamaran pekerjaannya saja. Jangan ada penjelas tambahan, jangan kembalikan dalam blok kode markdown \`\`\` (cukup teks polos berformat baris baru/paragraf yang rapi), dan jangan berikan pengantar chat seperti "Berikut adalah hasil suratnya:".`;
 
     const generatedDate = senderDate || new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'});
     
     const prompt = `Datanya adalah sebagai berikut:
-- Lokasi pembuatan surat: \${senderLocation || "Jakarta"}
-- Tanggal surat: \${generatedDate}
-- Penerima (Nama/Jabatan): \${recipient || "Manajer HRD"}
-- Nama Perusahaan: \${companyName}
-- Alamat Perusahaan: \${companyAddress || "di Tempat"}
+- Lokasi pembuatan surat: ${senderLocation || "Jakarta"}
+- Tanggal surat: ${generatedDate}
+- Penerima (Nama/Jabatan): ${recipient || "Manajer HRD"}
+- Nama Perusahaan: ${companyName}
+- Alamat Perusahaan: ${companyAddress || "di Tempat"}
 
-- Nama Lengkap Pelamar: \${senderName}
-- Tempat, Tanggal Lahir Pelamar: \${senderBirthDetails || "-"}
-- Pendidikan Terakhir: \${senderEducation || "-"}
-- Email: \${senderEmail || "-"}
-- Telepon/WhatsApp: \${senderPhone || "-"}
-- Alamat Lengkap: \${senderAddress || "-"}
+- Nama Lengkap Pelamar: ${senderName}
+- Tempat, Tanggal Lahir Pelamar: ${senderBirthDetails || "-"}
+- Pendidikan Terakhir: ${senderEducation || "-"}
+- Email: ${senderEmail || "-"}
+- Telepon/WhatsApp: ${senderPhone || "-"}
+- Alamat Lengkap: ${senderAddress || "-"}
 
-- Posisi yang dilamar: \${positionApplied}
-- Sumber informasi lowongan: \${sourceInfo || "informasi lowongan kerja terbaru"}
-- Pengalaman kerja: \${experience || "Fresh graduate yang bersemangat"}
-- Keterampilan utama: \${skills || "-"}
-- Catatan tambahan/keunggulan diri: \${additionalNotes || "-"}
+- Posisi yang dilamar: ${positionApplied}
+- Sumber informasi lowongan: ${sourceInfo || "informasi lowongan kerja terbaru"}
+- Pengalaman kerja: ${experience || "Fresh graduate yang bersemangat"}
+- Keterampilan utama: ${skills || "-"}
+- Catatan tambahan/keunggulan diri: ${additionalNotes || "-"}
 
 Tolong buat surat lamaran kerja Indonesia yang resmi dan optimal berdasarkan data tersebut.`;
 
@@ -121,7 +121,7 @@ Tolong buat surat lamaran kerja Indonesia yang resmi dan optimal berdasarkan dat
         
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
           try {
-            console.log(`[Vercel API] Menghubungi AI Model \${modelName} (Percobaan \${attempt}/\${maxRetries})...`);
+            console.log(`[Vercel API] Menghubungi AI Model ${modelName} (Percobaan ${attempt}/${maxRetries})...`);
             const response = await ai.models.generateContent({
               model: modelName,
               contents: prompt,
@@ -138,7 +138,7 @@ Tolong buat surat lamaran kerja Indonesia yang resmi dan optimal berdasarkan dat
             }
           } catch (err: any) {
             lastError = err;
-            console.log(`[Vercel API] Model \${modelName} sedang sibuk (Percobaan \${attempt}/\${maxRetries})`);
+            console.log(`[Vercel API] Model ${modelName} sedang sibuk (Percobaan ${attempt}/${maxRetries})`);
             
             const isTemporary = err.status === 429 || err.status === 503 || err.message?.includes("503") || err.message?.includes("UNAVAILABLE") || err.status === 408;
             if (isTemporary && attempt < maxRetries) {
@@ -164,38 +164,38 @@ Tolong buat surat lamaran kerja Indonesia yang resmi dan optimal berdasarkan dat
       const skillsList = skills ? skills.split(",").map((s: string) => s.trim()).filter((s: string) => s.length > 0) : [];
       let skillsParagraph = "-";
       if (skillsList.length > 0) {
-        skillsParagraph = skillsList.map((skill: string) => ` - \${skill}`).join("\n");
+        skillsParagraph = skillsList.map((skill: string) => ` - ${skill}`).join("\n");
       }
 
-      letterText = `\${senderLocation || "Jakarta"}, \${generatedDate}
+      letterText = `${senderLocation || "Jakarta"}, ${generatedDate}
 
-Hal   : Lamaran Pekerjaan - \${positionApplied}
+Hal   : Lamaran Pekerjaan - ${positionApplied}
 Lamp  : Pasfoto Berwarna & Berkas Administrative Lengkap
 
-Yth. \${recipient || "Manajer HRD"}
-\${companyName}
-\${companyAddress || "di Tempat"}
+Yth. ${recipient || "Manajer HRD"}
+${companyName}
+${companyAddress || "di Tempat"}
 
 Dengan hormat,
 
-Berdasarkan informasi lowongan pekerjaan yang saya dapatkan dari \${sourceInfo || "sumber terpercaya"}, melalui surat ini saya berminat dan bermaksud untuk mendaftarkan diri saya guna menempati posisi posisi \${positionApplied} pada perusahaan Bapak/Ibu pimpin.
+Berdasarkan informasi lowongan pekerjaan yang saya dapatkan dari ${sourceInfo || "sumber terpercaya"}, melalui surat ini saya berminat dan bermaksud untuk mendaftarkan diri saya guna menempati posisi posisi ${positionApplied} pada perusahaan Bapak/Ibu pimpin.
 
-Saya sangat berkeyakinan bahwa latar belakang pendidikan, kualifikasi keterampilan, dan antusiasme profesi saya dapat memberikan sumbangsih positif yang berharga bagi kemajuan \${companyName}.
+Saya sangat berkeyakinan bahwa latar belakang pendidikan, kualifikasi keterampilan, dan antusiasme profesi saya dapat memberikan sumbangsih positif yang berharga bagi kemajuan ${companyName}.
 
 Berikut ini adalah perincian data pribadi saya secara ringkas:
 
-Nama Lengkap          : \${senderName}
-Tempat/Tanggal Lahir  : \${senderBirthDetails || "-"}
-Pendidikan Terakhir   : \${senderEducation || "-"}
-Alamat Rumah Lengkap  : \${senderAddress || "-"}
-Telepon / WhatsApp    : \${senderPhone || "-"}
-Alamat Surel / Email  : \${senderEmail || "-"}
+Nama Lengkap          : ${senderName}
+Tempat/Tanggal Lahir  : ${senderBirthDetails || "-"}
+Pendidikan Terakhir   : ${senderEducation || "-"}
+Alamat Rumah Lengkap  : ${senderAddress || "-"}
+Telepon / WhatsApp    : ${senderPhone || "-"}
+Alamat Surel / Email  : ${senderEmail || "-"}
 
 Sebagai referensi dan bukti kompetensi pendukung, saya memiliki rekam jejak sebagai berikut:
-\${experience ? \`\\nPengalaman Profesional & Latar Belakang:\\n\${experience}\\n\` : ""}
+${experience ? `\nPengalaman Profesional & Latar Belakang:\n${experience}\n` : ""}
 Keterampilan Utama & Teknis:
-\${skillsParagraph}
-\${additionalNotes ? \`\\nNilai Tambah & Catatan Pendukung Lainnya:\\n\${additionalNotes}\\n\` : ""}
+${skillsParagraph}
+${additionalNotes ? `\nNilai Tambah & Catatan Pendukung Lainnya:\n${additionalNotes}\n` : ""}
 Saya merupakan pribadi yang tekun, tangguh, memiliki kemauan belajar yang kuat, serta siap bekerja secara sinergis dalam tim. Bersama dengan surat lamaran ini, saya lampirkan dokumen pendukung berupa Curriculum Vitae (CV) teranyar serta dokumen kelulusan akademik resmi saya demi kenyamanan peninjauan berkas Bapak/Ibu.
 
 Besar harapan saya untuk dapat diberikan kesempatan menghadiri sesi wawancara langsung atau uji kompetensi, agar saya dapat memaparkan gambaran dedikasi luhur saya secara lebih komprensif.
@@ -206,11 +206,11 @@ Hormat saya,
 
 
 
-( \${senderName} )`;
+( ${senderName} )`;
       modelUsed = "Sistem Generator Lokal Pintar (Fallback)";
     }
 
-    console.log(`[Vercel API] Berhasil menghasilkan surat lamaran menggunakan model: \${modelUsed}`);
+    console.log(`[Vercel API] Berhasil menghasilkan surat lamaran menggunakan model: ${modelUsed}`);
     res.json({ letter: letterText.trim(), isFallback: modelUsed.includes("Fallback") });
   } catch (error: any) {
     console.error("[Vercel API] Generative AI Error:", error);
